@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — ExploreWorld</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #f5ede0;
+      --cream: #faf7f2;
+      --terracotta: #c8623a;
+      --terracotta-light: #e07a52;
+      --deep: #1a1410;
+      --ink: #2d2318;
+      --muted: #8a7a6a;
+      --gold: #d4a847;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(250, 247, 242, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200,98,58,0.12);
+      animation: slideDown 0.7s ease both;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--deep);
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+    .logo span { color: var(--terracotta); }
+
+    nav { display: flex; gap: 2rem; }
+    nav a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--terracotta);
+      transition: width 0.25s ease;
+    }
+    nav a:hover, nav a.active { color: var(--terracotta); }
+    nav a:hover::after, nav a.active::after { width: 100%; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 10rem 3rem 5rem;
+      background: var(--sand);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .page-hero::before {
+      content: 'CONTACT';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(5rem, 14vw, 12rem);
+      font-weight: 900;
+      color: rgba(200,98,58,0.06);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+    .page-hero-inner { position: relative; z-index: 1; animation: fadeUp 0.8s 0.2s ease both; }
+    .eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1rem;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      color: var(--deep);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .page-hero h1 em { font-style: italic; color: var(--terracotta); }
+    .page-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MAIN CONTENT ── */
+    .contact-section {
+      flex: 1;
+      padding: 5rem 3rem 6rem;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── INFO COLUMN ── */
+    .contact-info { animation: fadeUp 0.8s 0.3s ease both; }
+
+    .info-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 0.8rem;
+    }
+    .info-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: var(--deep);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .info-title em { font-style: italic; color: var(--terracotta); }
+    .info-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-cards { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+    .contact-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.2rem 1.4rem;
+      background: #fff;
+      border-radius: 1rem;
+      border: 1px solid rgba(200,98,58,0.1);
+      box-shadow: 0 4px 14px rgba(26,20,16,0.05);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .contact-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(26,20,16,0.09);
+    }
+    .card-icon {
+      font-size: 1.4rem;
+      width: 2.8rem; height: 2.8rem;
+      background: var(--sand);
+      border-radius: 0.75rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-text h4 {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--deep);
+      margin-bottom: 0.2rem;
+    }
+    .card-text p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .social-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .social-btn {
+      width: 2.6rem; height: 2.6rem;
+      border-radius: 50%;
+      background: var(--sand);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid rgba(200,98,58,0.12);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .social-btn:hover {
+      background: var(--terracotta);
+      transform: translateY(-3px);
+    }
+
+    /* ── FORM COLUMN ── */
+    .contact-form-wrap {
+      animation: fadeUp 0.8s 0.45s ease both;
+    }
+    .form-card {
+      background: #fff;
+      border-radius: 1.8rem;
+      padding: 2.8rem;
+      box-shadow: 0 12px 40px rgba(26,20,16,0.09);
+      border: 1px solid rgba(200,98,58,0.08);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-bottom: 1.4rem;
+    }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    label .req { color: var(--terracotta); margin-left: 2px; }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.85rem 1.1rem;
+      background: var(--cream);
+      border: 1.5px solid rgba(200,98,58,0.15);
+      border-radius: 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      resize: none;
+    }
+    input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.7; }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--terracotta);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(200,98,58,0.1);
+    }
+    textarea { min-height: 140px; }
+
+    .subject-chips {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.4rem;
+    }
+    .chip {
+      padding: 0.45rem 1rem;
+      border-radius: 50px;
+      border: 1.5px solid rgba(200,98,58,0.2);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover, .chip.active {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: #fff;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--terracotta);
+      color: #fff;
+      border: none;
+      border-radius: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+      box-shadow: 0 4px 20px rgba(200,98,58,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .submit-btn:hover {
+      background: var(--terracotta-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200,98,58,0.4);
+    }
+    .submit-btn:active { transform: translateY(0); }
+
+    /* Success state */
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      animation: fadeUp 0.5s ease both;
+    }
+    .success-msg .checkmark {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .success-msg h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--deep);
+      margin-bottom: 0.5rem;
+    }
+    .success-msg p { color: var(--muted); font-size: 0.9rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--deep);
+      color: rgba(245,237,224,0.45);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--sand);
+      font-weight: 700;
+    }
+    .footer-logo span { color: var(--terracotta); }
+    footer nav { display: flex; gap: 1.8rem; }
+    footer nav a {
+      text-decoration: none;
+      color: rgba(245,237,224,0.45);
+      transition: color 0.2s;
+    }
+    footer nav a:hover { color: var(--terracotta); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      header { padding: 1rem 1.5rem; }
+      .page-hero { padding: 8rem 1.5rem 4rem; }
+      .contact-section { grid-template-columns: 1fr; gap: 3rem; padding: 3rem 1.5rem 4rem; }
+      .form-row { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+    @media (max-width: 500px) {
+      nav { gap: 1rem; }
+      .form-card { padding: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="logo" href="../index.html">Explore<span>World</span></a>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="../place/place.html">Places</a>
+    <a href="../gallery/gallery.html">Gallery</a>
+    <a href="contacts.html" class="active">Contact</a>
+  </nav>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">✦ We'd love to hear from you</p>
+    <h1>Get in <em>touch</em><br>with us</h1>
+    <p>Have a question, a destination suggestion, or just want to say hello? Send us a message and we'll get back to you shortly.</p>
+  </div>
+</div>
+
+<!-- CONTACT SECTION -->
+<div class="contact-section">
+
+  <!-- LEFT: Info -->
+  <div class="contact-info">
+    <p class="info-label">Contact Info</p>
+    <h2 class="info-title">Let's start a <em>conversation</em></h2>
+    <p class="info-desc">Whether you're planning your next trip or have feedback about the site, we're always happy to connect with fellow explorers.</p>
+
+    <div class="contact-cards">
+      <div class="contact-card">
+        <div class="card-icon">📍</div>
+        <div class="card-text">
+          <h4>Our Location</h4>
+          <p>123 Wanderer's Lane<br>Travel City, World</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="card-icon">✉️</div>
+        <div class="card-text">
+          <h4>Email Us</h4>
+          <p>hello@exploreworld.com<br>support@exploreworld.com</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="card-icon">🕐</div>
+        <div class="card-text">
+          <h4>Response Time</h4>
+          <p>We typically reply within<br>24–48 hours</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="info-label" style="margin-bottom:0.75rem;">Follow Our Journey</p>
+    <div class="social-row">
+      <a class="social-btn" href="#" title="Instagram">📷</a>
+      <a class="social-btn" href="#" title="Twitter">🐦</a>
+      <a class="social-btn" href="#" title="YouTube">▶️</a>
+      <a class="social-btn" href="#" title="Pinterest">📌</a>
+    </div>
+  </div>
+
+  <!-- RIGHT: Form -->
+  <div class="contact-form-wrap">
+    <div class="form-card">
+
+      <div id="form-content">
+        <p style="font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:1.6rem;">What can we help you with?</p>
+        <div class="subject-chips">
+          <button class="chip active" onclick="selectChip(this)">General Inquiry</button>
+          <button class="chip" onclick="selectChip(this)">Destination Tip</button>
+          <button class="chip" onclick="selectChip(this)">Partnership</button>
+          <button class="chip" onclick="selectChip(this)">Feedback</button>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" id="fname" placeholder="Jane" required/>
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text" id="lname" placeholder="Doe"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="jane@example.com" required/>
+        </div>
+
+        <div class="field">
+          <label>Message <span class="req">*</span></label>
+          <textarea id="message" placeholder="Tell us about your travel plans, questions, or just say hello…" required></textarea>
+        </div>
+
+        <button class="submit-btn" onclick="handleSubmit()">Send Message ✈️</button>
+      </div>
+
+      <div class="success-msg" id="success-msg">
+        <div class="checkmark">🌍</div>
+        <h3>Message sent!</h3>
+        <p>Thanks for reaching out. We'll get back to you within 24–48 hours.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Explore<span>World</span></div>
+  <p>© 2026 ExploreWorld — Travel &amp; Explore</p>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="../place/place.html">Places</a>
+    <a href="../gallery/gallery.html">Gallery</a>
+    <a href="contacts.html">Contact</a>
+  </nav>
+</footer>
+
+<script>
+  function selectChip(el) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function handleSubmit() {
+    const fname = document.getElementById('fname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const msg   = document.getElementById('message').value.trim();
+    if (!fname || !email || !msg) {
+      alert('Please fill in the required fields.');
+      return;
+    }
+    document.getElementById('form-content').style.display = 'none';
+    const s = document.getElementById('success-msg');
+    s.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
