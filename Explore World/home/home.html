@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExploreWorld</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #f5ede0;
+      --cream: #faf7f2;
+      --terracotta: #c8623a;
+      --terracotta-light: #e07a52;
+      --deep: #1a1410;
+      --ink: #2d2318;
+      --muted: #8a7a6a;
+      --gold: #d4a847;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(250,247,242,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200,98,58,0.12);
+      animation: slideDown 0.7s ease both;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--deep);
+      text-decoration: none;
+    }
+    .logo span { color: var(--terracotta); }
+    nav { display: flex; gap: 2rem; align-items: center; }
+    nav a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--terracotta);
+      transition: width 0.25s ease;
+    }
+    nav a:hover { color: var(--terracotta); }
+    nav a:hover::after { width: 100%; }
+    .nav-cta {
+      padding: 0.55rem 1.3rem;
+      background: var(--terracotta);
+      color: #fff !important;
+      border-radius: 50px;
+      font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta::after { display: none; }
+    .nav-cta:hover { background: var(--terracotta-light) !important; transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 3rem 5rem;
+      background: var(--sand);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(8rem, 22vw, 20rem);
+      font-weight: 900;
+      color: rgba(200,98,58,0.05);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.02em;
+    }
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-orb-1 {
+      width: 500px; height: 500px;
+      top: -150px; right: -100px;
+      background: radial-gradient(circle, rgba(200,98,58,0.1), transparent 70%);
+    }
+    .hero-orb-2 {
+      width: 350px; height: 350px;
+      bottom: -100px; left: -80px;
+      background: radial-gradient(circle, rgba(212,168,71,0.08), transparent 70%);
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      background: rgba(200,98,58,0.08);
+      padding: 0.4rem 1.1rem;
+      border-radius: 50px;
+      border: 1px solid rgba(200,98,58,0.18);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.2rem, 7vw, 6.5rem);
+      font-weight: 900;
+      color: var(--deep);
+      line-height: 1.0;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s 0.25s ease both;
+    }
+    .hero h1 em { font-style: italic; color: var(--terracotta); }
+    .hero h1 .line2 { display: block; }
+    .hero-inner > p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 520px;
+      margin: 0 auto 2.8rem;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.55s ease both;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.95rem 2.4rem;
+      background: var(--terracotta);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 50px;
+      transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+      box-shadow: 0 4px 20px rgba(200,98,58,0.35);
+    }
+    .btn:hover {
+      background: var(--terracotta-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200,98,58,0.45);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid rgba(45,35,24,0.2);
+      box-shadow: none;
+    }
+    .btn-ghost:hover {
+      background: var(--deep);
+      color: #fff;
+      border-color: var(--deep);
+      box-shadow: none;
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: fadeUp 1s 1s ease both;
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--terracotta), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
+    }
+
+    /* ── TICKER ── */
+    .ticker {
+      background: var(--deep);
+      padding: 0.85rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker-track {
+      display: inline-flex;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 0 2.5rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245,237,224,0.5);
+    }
+    .ticker-item .dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      flex-shrink: 0;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── WELCOME ── */
+    .welcome {
+      padding: 7rem 3rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      background: var(--cream);
+    }
+    .section-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      color: var(--deep);
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+    .section-title em { font-style: italic; color: var(--terracotta); }
+    .section-body {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+    }
+    .welcome-image-stack {
+      position: relative;
+      height: 480px;
+    }
+    .stack-img {
+      position: absolute;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(26,20,16,0.14);
+    }
+    .stack-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .stack-img-1 { width: 75%; height: 70%; top: 0; right: 0; }
+    .stack-img-2 { width: 55%; height: 55%; bottom: 0; left: 0; border: 4px solid var(--cream); }
+    .stack-badge {
+      position: absolute;
+      top: 55%; right: 6%;
+      background: #fff;
+      border-radius: 1.1rem;
+      padding: 0.9rem 1.2rem;
+      box-shadow: 0 8px 28px rgba(26,20,16,0.12);
+      text-align: center;
+      min-width: 110px;
+    }
+    .stack-badge strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--terracotta);
+      line-height: 1;
+    }
+    .stack-badge span { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── WHY TRAVEL ── */
+    .why-travel {
+      padding: 7rem 3rem;
+      background: var(--deep);
+      position: relative;
+      overflow: hidden;
+    }
+    .why-travel::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,98,58,0.08), transparent 65%);
+      pointer-events: none;
+    }
+    .why-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3.5rem;
+    }
+    .why-header .section-title { color: var(--sand); margin-bottom: 0; }
+    .why-header .section-eyebrow { color: var(--terracotta); }
+    .why-header p {
+      max-width: 340px;
+      font-size: 0.9rem;
+      color: rgba(245,237,224,0.45);
+      line-height: 1.7;
+      text-align: right;
+    }
+    .reasons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .reason-card {
+      padding: 2.2rem;
+      border-radius: 1.4rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: background 0.3s, transform 0.3s, border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .reason-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--terracotta);
+      transition: height 0.35s ease;
+    }
+    .reason-card:hover { background: rgba(200,98,58,0.1); transform: translateY(-5px); border-color: rgba(200,98,58,0.25); }
+    .reason-card:hover::before { height: 100%; }
+    .reason-icon { font-size: 2rem; margin-bottom: 1.2rem; }
+    .reason-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--sand);
+      margin-bottom: 0.7rem;
+    }
+    .reason-card p { font-size: 0.85rem; color: rgba(245,237,224,0.45); line-height: 1.7; }
+    .reason-num {
+      position: absolute;
+      top: 1.5rem; right: 1.5rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: rgba(255,255,255,0.04);
+      line-height: 1;
+    }
+
+    /* ── DESTINATIONS PREVIEW ── */
+    .destinations-preview { padding: 7rem 3rem; background: var(--sand); }
+    .dest-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+    }
+    .dest-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .dest-card {
+      border-radius: 1.5rem;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(26,20,16,0.1);
+    }
+    .dest-card-main { aspect-ratio: 3/4; }
+    .dest-card-sm   { aspect-ratio: 4/3; }
+    .dest-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.55s ease; }
+    .dest-card:hover img { transform: scale(1.07); }
+    .dest-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(26,20,16,0.82) 0%, transparent 55%);
+      padding: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: #fff;
+    }
+    .dest-overlay .country { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.3rem; }
+    .dest-overlay h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+    .dest-overlay .tag {
+      margin-top: 0.6rem;
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.8rem;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      border-radius: 50px;
+    }
+    .dest-side { display: flex; flex-direction: column; gap: 1.5rem; }
+    .dest-card-sm .dest-overlay h3 { font-size: 1.15rem; }
+
+    /* ── QUOTE ── */
+    .quote-section {
+      padding: 6rem 3rem;
+      background: var(--cream);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .quote-section::before {
+      content: '"';
+      position: absolute;
+      top: -1rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(10rem, 25vw, 20rem);
+      color: rgba(200,98,58,0.05);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .quote-inner { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+    blockquote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+      font-style: italic;
+      color: var(--deep);
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+    }
+    blockquote em { color: var(--terracotta); font-style: normal; font-weight: 700; }
+    .quote-attr { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* ── CTA ── */
+    .cta {
+      background: var(--terracotta);
+      padding: 6rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta::before {
+      content: 'GO';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(10rem, 30vw, 24rem);
+      font-weight: 900;
+      color: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+    .cta h2 em { font-style: italic; opacity: 0.8; }
+    .cta p { color: rgba(255,255,255,0.7); font-size: 1rem; margin-bottom: 2.5rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-white { background: #fff; color: var(--terracotta); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .btn-white:hover { background: var(--sand); color: var(--terracotta); box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
+    .btn-outline-white { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.4); box-shadow: none; }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.12); color: #fff; box-shadow: none; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--deep);
+      color: rgba(245,237,224,0.45);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--sand); font-weight: 700; }
+    .footer-logo span { color: var(--terracotta); }
+    footer nav { display: flex; gap: 1.8rem; }
+    footer nav a { text-decoration: none; color: rgba(245,237,224,0.45); transition: color 0.2s; }
+    footer nav a:hover { color: var(--terracotta); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      header { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 5rem; }
+      .welcome { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 1.5rem; }
+      .welcome-image-stack { display: none; }
+      .why-travel { padding: 5rem 1.5rem; }
+      .why-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .why-header p { text-align: left; }
+      .reasons-grid { grid-template-columns: 1fr 1fr; }
+      .destinations-preview { padding: 5rem 1.5rem; }
+      .dest-row { grid-template-columns: 1fr; }
+      .dest-card-main { aspect-ratio: 4/3; }
+      .dest-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .quote-section, .cta { padding: 5rem 1.5rem; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+    @media (max-width: 560px) {
+      nav { gap: 0.8rem; }
+      .nav-cta { display: none; }
+      .reasons-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="logo" href="index.html">Explore<span>World</span></a>
+  <nav>
+    <a href="index/index1.html">Home</a>
+    <a href="place/place.html">Places</a>
+    <a href="gallery/gallery.html">Gallery</a>
+    <a href="contacts/contacts.html">Contact</a>
+    <a href="place/place.html" class="nav-cta">Start Exploring</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">WORLD</div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-inner">
+    <span class="hero-eyebrow">✦ Your world awaits</span>
+    <h1>
+      Discover the <em>beauty</em>
+      <span class="line2">of our world</span>
+    </h1>
+    <p>From ancient ruins to turquoise coastlines — ExploreWorld brings the planet's most breathtaking places to your fingertips.</p>
+    <div class="hero-btns">
+      <a href="place/place.html" class="btn">Explore Places</a>
+      <a href="gallery/gallery.html" class="btn btn-ghost">View Gallery</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="dot"></span>Paris</span>
+    <span class="ticker-item"><span class="dot"></span>Maldives</span>
+    <span class="ticker-item"><span class="dot"></span>Kyoto</span>
+    <span class="ticker-item"><span class="dot"></span>Santorini</span>
+    <span class="ticker-item"><span class="dot"></span>Patagonia</span>
+    <span class="ticker-item"><span class="dot"></span>Sahara</span>
+    <span class="ticker-item"><span class="dot"></span>New York</span>
+    <span class="ticker-item"><span class="dot"></span>Marrakech</span>
+    <span class="ticker-item"><span class="dot"></span>Bali</span>
+    <span class="ticker-item"><span class="dot"></span>Machu Picchu</span>
+    <span class="ticker-item"><span class="dot"></span>Paris</span>
+    <span class="ticker-item"><span class="dot"></span>Maldives</span>
+    <span class="ticker-item"><span class="dot"></span>Kyoto</span>
+    <span class="ticker-item"><span class="dot"></span>Santorini</span>
+    <span class="ticker-item"><span class="dot"></span>Patagonia</span>
+    <span class="ticker-item"><span class="dot"></span>Sahara</span>
+    <span class="ticker-item"><span class="dot"></span>New York</span>
+    <span class="ticker-item"><span class="dot"></span>Marrakech</span>
+    <span class="ticker-item"><span class="dot"></span>Bali</span>
+    <span class="ticker-item"><span class="dot"></span>Machu Picchu</span>
+  </div>
+</div>
+
+<!-- WELCOME -->
+<section class="welcome">
+  <div>
+    <p class="section-eyebrow">✦ Welcome to ExploreWorld</p>
+    <h2 class="section-title">The whole world,<br><em>beautifully</em> curated</h2>
+    <p class="section-body">ExploreWorld is your digital passport to the planet's most remarkable destinations. We handpick every place, photograph every corner, and craft every story to ignite your wanderlust and guide your next great adventure.</p>
+    <p class="section-body">Whether you dream of sun-drenched coastlines, ancient city streets, or wild mountain passes — your journey starts here.</p>
+    <a href="place/place.html" class="btn" style="margin-top:0.8rem">Browse Destinations →</a>
+  </div>
+  <div class="welcome-image-stack">
+    <div class="stack-img stack-img-1">
+      <img src="image/paris.jpg" alt="Paris"
+        onerror="this.style.cssText='width:100%;height:100%;background:linear-gradient(160deg,#c8623a,#3a1a0d);display:block'">
+    </div>
+    <div class="stack-img stack-img-2">
+      <img src="image/download.jpg" alt="Maldives"
+        onerror="this.style.cssText='width:100%;height:100%;background:linear-gradient(160deg,#0099cc,#003344);display:block'">
+    </div>
+    <div class="stack-badge">
+      <strong>120+</strong>
+      <span>Destinations</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHY TRAVEL -->
+<section class="why-travel">
+  <div class="why-header">
+    <div>
+      <p class="section-eyebrow">✦ Why Travel</p>
+      <h2 class="section-title">Travel opens<br><em>everything</em></h2>
+    </div>
+    <p>There are a thousand reasons to go. Here are just a few that move us most.</p>
+  </div>
+  <div class="reasons-grid">
+    <div class="reason-card">
+      <div class="reason-num">01</div>
+      <div class="reason-icon">🧠</div>
+      <h3>Expand Your Mind</h3>
+      <p>Every new culture rewires your perspective and deepens your understanding of what it means to be human.</p>
+    </div>
+    <div class="reason-card">
+      <div class="reason-num">02</div>
+      <div class="reason-icon">❤️</div>
+      <h3>Open Your Heart</h3>
+      <p>Kindness is universal. Strangers become friends. The warmth you receive in a foreign land stays with you forever.</p>
+    </div>
+    <div class="reason-card">
+      <div class="reason-num">03</div>
+      <div class="reason-icon">🌱</div>
+      <h3>Grow as a Person</h3>
+      <p>Navigating the unfamiliar builds resilience and confidence that no classroom or boardroom ever could.</p>
+    </div>
+    <div class="reason-card">
+      <div class="reason-num">04</div>
+      <div class="reason-icon">📸</div>
+      <h3>Collect Memories</h3>
+      <p>Material things fade. But a sunrise over Angkor Wat or fresh pasta in Naples — those never leave you.</p>
+    </div>
+    <div class="reason-card">
+      <div class="reason-num">05</div>
+      <div class="reason-icon">🌍</div>
+      <h3>See the Bigger Picture</h3>
+      <p>The world is vast and extraordinarily beautiful. Seeing even a small piece of it changes how you see everything.</p>
+    </div>
+    <div class="reason-card">
+      <div class="reason-num">06</div>
+      <div class="reason-icon">✨</div>
+      <h3>Feel Truly Alive</h3>
+      <p>Stepping off a plane into somewhere entirely new — that particular thrill reminds you to be fully present.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DESTINATIONS PREVIEW -->
+<section class="destinations-preview">
+  <div class="dest-header">
+    <div>
+      <p class="section-eyebrow">✦ Featured Destinations</p>
+      <h2 class="section-title">Places worth<br><em>dreaming</em> about</h2>
+    </div>
+    <a href="place/place.html" class="btn">See All Places →</a>
+  </div>
+  <div class="dest-row">
+    <div class="dest-card dest-card-main">
+      <img src="image/paris.jpg" alt="Paris"
+        onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#c8623a,#3a1a0d);display:block'">
+      <div class="dest-overlay">
+        <p class="country">France</p>
+        <h3>Paris</h3>
+        <span class="tag">Romance &amp; Culture</span>
+      </div>
+    </div>
+    <div class="dest-side">
+      <div class="dest-card dest-card-sm">
+        <img src="image/download.jpg" alt="Maldives"
+          onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#0099cc,#003344);display:block'">
+        <div class="dest-overlay">
+          <p class="country">Indian Ocean</p>
+          <h3>Maldives</h3>
+          <span class="tag">Beach &amp; Relaxation</span>
+        </div>
+      </div>
+      <div class="dest-card dest-card-sm">
+        <img src="image/paris.jpg" alt="Patagonia"
+          onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#2c5f7a,#0d2030);display:block'">
+        <div class="dest-overlay">
+          <p class="country">South America</p>
+          <h3>Patagonia</h3>
+          <span class="tag">Adventure</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section">
+  <div class="quote-inner">
+    <blockquote>"The world is a book, and those who do not travel read <em>only one page.</em>"</blockquote>
+    <p class="quote-attr">— Saint Augustine</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta-inner">
+    <h2>Ready to <em>explore?</em></h2>
+    <p>Your next unforgettable adventure is just a click away. Browse our curated destinations and start planning today.</p>
+    <div class="cta-btns">
+      <a href="place/place.html" class="btn btn-white">Explore Places</a>
+      <a href="contacts/contacts.html" class="btn btn-outline-white">Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Explore<span>World</span></div>
+  <p>© 2026 ExploreWorld — Travel &amp; Explore</p>
+  <nav>
+    <a href="new/new.html">Home</a>
+    <a href="place/place.html">Places</a>
+    <a href="gallery/gallery.html">Gallery</a>
+    <a href="contacts/contacts.html">Contact</a>
+  </nav>
+</footer>
+
+</body>
+</html>

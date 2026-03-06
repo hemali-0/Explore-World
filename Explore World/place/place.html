@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Places — ExploreWorld</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #f5ede0;
+      --cream: #faf7f2;
+      --terracotta: #c8623a;
+      --terracotta-light: #e07a52;
+      --deep: #1a1410;
+      --ink: #2d2318;
+      --muted: #8a7a6a;
+      --gold: #d4a847;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(250,247,242,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200,98,58,0.12);
+      animation: slideDown 0.7s ease both;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--deep);
+      text-decoration: none;
+    }
+    .logo span { color: var(--terracotta); }
+    nav { display: flex; gap: 2rem; }
+    nav a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--terracotta);
+      transition: width 0.25s ease;
+    }
+    nav a:hover, nav a.active { color: var(--terracotta); }
+    nav a:hover::after, nav a.active::after { width: 100%; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 10rem 3rem 5rem;
+      background: var(--sand);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .page-hero::before {
+      content: 'PLACES';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(5rem, 14vw, 12rem);
+      font-weight: 900;
+      color: rgba(200,98,58,0.06);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+    .page-hero-inner { position: relative; z-index: 1; animation: fadeUp 0.8s 0.2s ease both; }
+    .eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1rem;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      color: var(--deep);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .page-hero h1 em { font-style: italic; color: var(--terracotta); }
+    .page-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Stats row */
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 2.5rem;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--terracotta);
+    }
+    .hero-stat span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SEARCH + FILTER ── */
+    .controls {
+      padding: 3rem 3rem 0;
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.35s ease both;
+    }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+      max-width: 340px;
+    }
+    .search-wrap span {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.8rem;
+      border-radius: 50px;
+      border: 1.5px solid rgba(200,98,58,0.2);
+      background: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus {
+      border-color: var(--terracotta);
+      box-shadow: 0 0 0 3px rgba(200,98,58,0.1);
+    }
+    .search-wrap input::placeholder { color: var(--muted); opacity: 0.7; }
+
+    .filter-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .chip {
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      border: 1.5px solid rgba(200,98,58,0.2);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover, .chip.active {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(200,98,58,0.28);
+    }
+
+    .result-count {
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── PLACES GRID ── */
+    .places-section {
+      flex: 1;
+      padding: 2.5rem 3rem 6rem;
+    }
+
+    .places-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .place-card {
+      background: #fff;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(26,20,16,0.07);
+      border: 1px solid rgba(200,98,58,0.07);
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: fadeUp 0.6s ease both;
+      cursor: pointer;
+    }
+    .place-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 48px rgba(26,20,16,0.13);
+    }
+
+    .card-img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+    .card-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.55s ease;
+    }
+    .place-card:hover .card-img-wrap img { transform: scale(1.07); }
+
+    .card-badge {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      padding: 0.3rem 0.85rem;
+      border-radius: 50px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+    .badge-beach    { background: rgba(0,153,204,0.75);  color: #fff; }
+    .badge-city     { background: rgba(26,20,16,0.7);    color: #fff; }
+    .badge-nature   { background: rgba(44,119,68,0.75);  color: #fff; }
+    .badge-culture  { background: rgba(139,34,82,0.75);  color: #fff; }
+    .badge-desert   { background: rgba(212,168,71,0.85); color: #fff; }
+
+    .card-fav {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      width: 2.2rem; height: 2.2rem;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .card-fav:hover { transform: scale(1.15); }
+    .card-fav.liked { background: #fee2e2; }
+
+    .card-rating {
+      position: absolute;
+      bottom: 1rem; right: 1rem;
+      background: rgba(26,20,16,0.65);
+      backdrop-filter: blur(6px);
+      color: var(--gold);
+      font-size: 0.72rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+
+    .card-body { padding: 1.4rem 1.5rem 1.6rem; }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+    .card-country {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+    }
+    .card-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--deep);
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+    .card-body p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(200,98,58,0.1);
+    }
+    .card-detail {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .card-detail span { display: flex; align-items: center; gap: 0.3rem; }
+
+    .card-btn {
+      padding: 0.5rem 1.2rem;
+      background: var(--terracotta);
+      color: #fff;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .card-btn:hover {
+      background: var(--terracotta-light);
+      transform: translateY(-1px);
+    }
+
+    /* Stagger */
+    .place-card:nth-child(1)  { animation-delay: 0.05s; }
+    .place-card:nth-child(2)  { animation-delay: 0.12s; }
+    .place-card:nth-child(3)  { animation-delay: 0.19s; }
+    .place-card:nth-child(4)  { animation-delay: 0.26s; }
+    .place-card:nth-child(5)  { animation-delay: 0.33s; }
+    .place-card:nth-child(6)  { animation-delay: 0.40s; }
+
+    /* Empty state */
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--deep);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--deep);
+      color: rgba(245,237,224,0.45);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--sand);
+      font-weight: 700;
+    }
+    .footer-logo span { color: var(--terracotta); }
+    footer nav { display: flex; gap: 1.8rem; }
+    footer nav a {
+      text-decoration: none;
+      color: rgba(245,237,224,0.45);
+      transition: color 0.2s;
+    }
+    footer nav a:hover { color: var(--terracotta); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      header { padding: 1rem 1.5rem; }
+      .page-hero { padding: 8rem 1.5rem 4rem; }
+      .controls { padding: 2.5rem 1.5rem 0; }
+      .places-section { padding: 2rem 1.5rem 5rem; }
+      .hero-stats { gap: 2rem; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+    @media (max-width: 500px) {
+      nav { gap: 1rem; }
+      .result-count { display: none; }
+      .places-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="logo" href="../index.html">Explore<span>World</span></a>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="place.html" class="active">Places</a>
+    <a href="../gallery/gallery.html">Gallery</a>
+    <a href="../contacts/contacts.html">Contact</a>
+  </nav>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">✦ Curated destinations worldwide</p>
+    <h1>Find your next<br><em>adventure</em></h1>
+    <p>From sun-soaked beaches to ancient city streets — explore our handpicked collection of the world's most remarkable places.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>120+</strong><span>Destinations</span></div>
+      <div class="hero-stat"><strong>40+</strong><span>Countries</span></div>
+      <div class="hero-stat"><strong>50k+</strong><span>Explorers</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH + FILTERS -->
+<div class="controls">
+  <div class="search-wrap">
+    <span>🔍</span>
+    <input type="text" id="search" placeholder="Search destinations…" oninput="applyFilters()"/>
+  </div>
+  <div class="filter-chips">
+    <button class="chip active" onclick="setFilter('all', this)">All</button>
+    <button class="chip" onclick="setFilter('beach', this)">🏖 Beach</button>
+    <button class="chip" onclick="setFilter('city', this)">🏙 City</button>
+    <button class="chip" onclick="setFilter('nature', this)">🌿 Nature</button>
+    <button class="chip" onclick="setFilter('culture', this)">🏛 Culture</button>
+    <button class="chip" onclick="setFilter('desert', this)">🏜 Desert</button>
+  </div>
+  <div class="result-count" id="result-count">Showing 6 places</div>
+</div>
+
+<!-- PLACES GRID -->
+<section class="places-section">
+  <div class="places-grid" id="places-grid">
+
+    <div class="place-card" data-cat="city" data-name="paris">
+      <div class="card-img-wrap">
+        <img src="../image/paris.jpg" alt="Paris"
+          onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#c8623a,#3a1a0d);display:block'">
+        <span class="card-badge badge-city">City</span>
+        <button class="card-fav" onclick="toggleFav(event, this)">🤍</button>
+        <div class="card-rating">★ 4.9</div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-country">France</span>
+        </div>
+        <h3>Paris</h3>
+        <p>The City of Light — romance, world-class art, iconic architecture, and cuisine that lingers in memory long after you leave.</p>
+        <div class="card-footer">
+          <div class="card-detail">
+            <span>🌤 Mild</span>
+            <span>✈️ 2h from London</span>
+          </div>
+          <button class="card-btn">Explore →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="place-card" data-cat="beach" data-name="maldives">
+      <div class="card-img-wrap">
+        <img src="../image/download.jpg" alt="Maldives"
+          onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#0099cc,#003344);display:block'">
+        <span class="card-badge badge-beach">Beach</span>
+        <button class="card-fav" onclick="toggleFav(event, this)">🤍</button>
+        <div class="card-rating">★ 5.0</div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-country">Indian Ocean</span>
+        </div>
+        <h3>Maldives</h3>
+        <p>A tropical paradise of overwater bungalows, crystal lagoons, and coral reefs teeming with life beneath turquoise skies.</p>
+        <div class="card-footer">
+          <div class="card-detail">
+            <span>☀️ Tropical</span>
+            <span>🤿 Diving</span>
+          </div>
+          <button class="card-btn">Explore →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="place-card" data-cat="city" data-name="kyoto">
+      <div class="card-img-wrap">
+        <img src="../image/paris.jpg" alt="Kyoto"
+          onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#8b2252,#2a0a18);display:block'">
+        <span class="card-badge badge-culture">Culture</span>
+        <button class="card-fav" onclick="toggleFav(event, this)">🤍</button>
+        <div class="card-rating">★ 4.8</div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-country">Japan</span>
+        </div>
+        <h3>Kyoto</h3>
+        <p>Ancient temples, bamboo groves, and the quiet beauty of a thousand years of tradition — Japan's spiritual heartland.</p>
+        <div class="card-footer">
+          <div class="card-detail">
+            <span>🍂 Seasonal</span>
+            <span>🍵 Tranquil</span>
+          </div>
+          <button class="card-btn">Explore →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="place-card" data-cat="nature" data-name="patagonia">
+      <div class="card-img-wrap">
+        <img src="../image/paris.jpg" alt="Patagonia"
+          onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#2c5f7a,#0d2030);display:block'">
+        <span class="card-badge badge-nature">Nature</span>
+        <button class="card-fav" onclick="toggleFav(event, this)">🤍</button>
+        <div class="card-rating">★ 4.7</div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-country">Argentina & Chile</span>
+        </div>
+        <h3>Patagonia</h3>
+        <p>Where glaciers meet jagged peaks and endless steppe — the raw, untouched end of the world awaits the bold explorer.</p>
+        <div class="card-footer">
+          <div class="card-detail">
+            <span>🥾 Hiking</span>
+            <span>❄️ Glaciers</span>
+          </div>
+          <button class="card-btn">Explore →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="place-card" data-cat="desert" data-name="sahara">
+      <div class="card-img-wrap">
+        <img src="../image/paris.jpg" alt="Sahara"
+          onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#d4a847,#7a3a0d);display:block'">
+        <span class="card-badge badge-desert">Desert</span>
+        <button class="card-fav" onclick="toggleFav(event, this)">🤍</button>
+        <div class="card-rating">★ 4.6</div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-country">Morocco / Algeria</span>
+        </div>
+        <h3>Sahara Desert</h3>
+        <p>An ocean of golden dunes rolling to every horizon — sleep under a billion stars and feel the silence of eternity.</p>
+        <div class="card-footer">
+          <div class="card-detail">
+            <span>🐪 Camel trek</span>
+            <span>🌙 Stargazing</span>
+          </div>
+          <button class="card-btn">Explore →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="place-card" data-cat="beach" data-name="santorini">
+      <div class="card-img-wrap">
+        <img src="../image/download.jpg" alt="Santorini"
+          onerror="this.style.cssText='width:100%;height:100%;object-fit:cover;background:linear-gradient(160deg,#3a6eaa,#1a2a4a);display:block'">
+        <span class="card-badge badge-beach">Beach</span>
+        <button class="card-fav" onclick="toggleFav(event, this)">🤍</button>
+        <div class="card-rating">★ 4.8</div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-country">Greece</span>
+        </div>
+        <h3>Santorini</h3>
+        <p>Whitewashed cliffs tumbling into the Aegean, volcanic black-sand beaches, and sunsets that will stop your heart.</p>
+        <div class="card-footer">
+          <div class="card-detail">
+            <span>⛵ Sailing</span>
+            <span>🍷 Wine</span>
+          </div>
+          <button class="card-btn">Explore →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="empty-state">
+      <div class="icon">🌍</div>
+      <h3>No destinations found</h3>
+      <p>Try a different search or filter.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Explore<span>World</span></div>
+  <p>© 2026 ExploreWorld — Travel &amp; Explore</p>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="place.html">Places</a>
+    <a href="../gallery/gallery.html">Gallery</a>
+    <a href="../contacts/contacts.html">Contact</a>
+  </nav>
+</footer>
+
+<script>
+  let activeFilter = 'all';
+
+  function setFilter(cat, btn) {
+    activeFilter = cat;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const query = document.getElementById('search').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.place-card');
+    let visible = 0;
+
+    cards.forEach(card => {
+      const catMatch  = activeFilter === 'all' || card.dataset.cat === activeFilter;
+      const nameMatch = card.dataset.name.includes(query) ||
+                        card.querySelector('h3').textContent.toLowerCase().includes(query) ||
+                        card.querySelector('p').textContent.toLowerCase().includes(query);
+      const show = catMatch && (query === '' || nameMatch);
+      card.style.display = show ? 'block' : 'none';
+      if (show) visible++;
+    });
+
+    document.getElementById('result-count').textContent = `Showing ${visible} place${visible !== 1 ? 's' : ''}`;
+    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  function toggleFav(e, btn) {
+    e.stopPropagation();
+    const liked = btn.classList.toggle('liked');
+    btn.textContent = liked ? '❤️' : '🤍';
+  }
+</script>
+
+</body>
+</html>

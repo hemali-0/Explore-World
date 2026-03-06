@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gallery — ExploreWorld</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #f5ede0;
+      --cream: #faf7f2;
+      --terracotta: #c8623a;
+      --terracotta-light: #e07a52;
+      --deep: #1a1410;
+      --ink: #2d2318;
+      --muted: #8a7a6a;
+      --gold: #d4a847;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(250,247,242,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200,98,58,0.12);
+      animation: slideDown 0.7s ease both;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--deep);
+      text-decoration: none;
+    }
+    .logo span { color: var(--terracotta); }
+
+    nav { display: flex; gap: 2rem; }
+    nav a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--terracotta);
+      transition: width 0.25s ease;
+    }
+    nav a:hover, nav a.active { color: var(--terracotta); }
+    nav a:hover::after, nav a.active::after { width: 100%; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 10rem 3rem 5rem;
+      background: var(--sand);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .page-hero::before {
+      content: 'GALLERY';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(5rem, 14vw, 12rem);
+      font-weight: 900;
+      color: rgba(200,98,58,0.06);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+    .page-hero-inner { position: relative; z-index: 1; animation: fadeUp 0.8s 0.2s ease both; }
+    .eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1rem;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      color: var(--deep);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .page-hero h1 em { font-style: italic; color: var(--terracotta); }
+    .page-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── FILTER TABS ── */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      padding: 3rem 3rem 0;
+      animation: fadeUp 0.8s 0.35s ease both;
+    }
+    .filter-btn {
+      padding: 0.5rem 1.3rem;
+      border-radius: 50px;
+      border: 1.5px solid rgba(200,98,58,0.2);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(200,98,58,0.3);
+    }
+
+    /* ── MASONRY GRID ── */
+    .gallery-section {
+      flex: 1;
+      padding: 2.5rem 3rem 5rem;
+    }
+
+    .masonry {
+      columns: 4 220px;
+      column-gap: 1.2rem;
+    }
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 1.2rem;
+      border-radius: 1.1rem;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(26,20,16,0.09);
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: fadeUp 0.6s ease both;
+    }
+    .masonry-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(26,20,16,0.15);
+    }
+    .masonry-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .masonry-item:hover img { transform: scale(1.05); }
+
+    .masonry-item .item-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(26,20,16,0.75) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: flex-end;
+      padding: 1.2rem;
+    }
+    .masonry-item:hover .item-overlay { opacity: 1; }
+
+    .item-overlay .label {
+      color: #fff;
+    }
+    .item-overlay .label .dest-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .item-overlay .label .dest-tag {
+      font-size: 0.72rem;
+      opacity: 0.75;
+      margin-top: 0.1rem;
+    }
+    .item-overlay .expand-icon {
+      margin-left: auto;
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+
+    /* Stagger animation delays */
+    .masonry-item:nth-child(1)  { animation-delay: 0.05s; }
+    .masonry-item:nth-child(2)  { animation-delay: 0.10s; }
+    .masonry-item:nth-child(3)  { animation-delay: 0.15s; }
+    .masonry-item:nth-child(4)  { animation-delay: 0.20s; }
+    .masonry-item:nth-child(5)  { animation-delay: 0.25s; }
+    .masonry-item:nth-child(6)  { animation-delay: 0.30s; }
+    .masonry-item:nth-child(7)  { animation-delay: 0.35s; }
+    .masonry-item:nth-child(8)  { animation-delay: 0.40s; }
+    .masonry-item:nth-child(9)  { animation-delay: 0.45s; }
+    .masonry-item:nth-child(10) { animation-delay: 0.50s; }
+
+    /* Placeholder images using CSS gradients */
+    .img-placeholder {
+      width: 100%;
+      display: block;
+    }
+
+    /* ── VIDEO SECTION ── */
+    .video-section {
+      background: var(--deep);
+      padding: 5rem 3rem;
+      text-align: center;
+    }
+    .video-section .eyebrow { color: var(--terracotta); }
+    .video-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 900;
+      color: var(--sand);
+      margin-bottom: 0.75rem;
+    }
+    .video-section h2 em { font-style: italic; color: var(--terracotta); }
+    .video-section p {
+      color: rgba(245,237,224,0.55);
+      font-size: 0.95rem;
+      margin-bottom: 2.8rem;
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .video-card {
+      border-radius: 1.4rem;
+      overflow: hidden;
+      position: relative;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .video-card video {
+      width: 100%;
+      display: block;
+      max-height: 380px;
+      object-fit: cover;
+    }
+    .video-card .video-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .video-thumb-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #2a1a10, #1a2a2a);
+      transition: filter 0.3s;
+    }
+    .video-card:hover .video-thumb-bg { filter: brightness(1.15); }
+    .play-btn {
+      position: relative;
+      z-index: 1;
+      width: 4.5rem; height: 4.5rem;
+      border-radius: 50%;
+      background: var(--terracotta);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 8px 28px rgba(200,98,58,0.45);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .video-card:hover .play-btn {
+      transform: scale(1.1);
+      box-shadow: 0 12px 36px rgba(200,98,58,0.55);
+    }
+    .video-meta {
+      padding: 1.2rem 1.4rem;
+      text-align: left;
+    }
+    .video-meta h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--sand);
+      margin-bottom: 0.25rem;
+    }
+    .video-meta p {
+      font-size: 0.78rem;
+      color: rgba(245,237,224,0.45);
+      margin: 0;
+    }
+    .video-side {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .video-side .video-card .video-thumb {
+      aspect-ratio: 4/3;
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(26,20,16,0.93);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      animation: fadeIn 0.2s ease;
+    }
+    .lightbox.open { display: flex; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .lightbox-inner {
+      position: relative;
+      max-width: 900px;
+      width: 100%;
+      animation: scaleIn 0.25s ease;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    .lightbox-inner img {
+      width: 100%;
+      border-radius: 1.2rem;
+      display: block;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    }
+    .lightbox-caption {
+      text-align: center;
+      margin-top: 1.2rem;
+      color: rgba(245,237,224,0.7);
+      font-size: 0.875rem;
+    }
+    .lightbox-caption strong {
+      font-family: 'Playfair Display', serif;
+      color: var(--sand);
+      font-size: 1.1rem;
+      display: block;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -1.2rem; right: -1.2rem;
+      width: 2.6rem; height: 2.6rem;
+      border-radius: 50%;
+      background: var(--terracotta);
+      border: none;
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .lightbox-close:hover { background: var(--terracotta-light); transform: scale(1.1); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--deep);
+      color: rgba(245,237,224,0.45);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--sand);
+      font-weight: 700;
+    }
+    .footer-logo span { color: var(--terracotta); }
+    footer nav { display: flex; gap: 1.8rem; }
+    footer nav a {
+      text-decoration: none;
+      color: rgba(245,237,224,0.45);
+      transition: color 0.2s;
+    }
+    footer nav a:hover { color: var(--terracotta); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      header { padding: 1rem 1.5rem; }
+      .page-hero { padding: 8rem 1.5rem 4rem; }
+      .gallery-section { padding: 2rem 1.5rem 4rem; }
+      .filter-bar { padding: 2.5rem 1.5rem 0; }
+      .video-grid { grid-template-columns: 1fr; }
+      .video-side { flex-direction: row; }
+      .video-section { padding: 4rem 1.5rem; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+    @media (max-width: 500px) {
+      nav { gap: 1rem; }
+      .masonry { columns: 2 140px; }
+      .video-side { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="logo" href="../index.html">Explore<span>World</span></a>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="../place/place.html">Places</a>
+    <a href="gallery.html" class="active">Gallery</a>
+    <a href="../contacts/contacts.html">Contact</a>
+  </nav>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">✦ Visual stories from around the world</p>
+    <h1>The <em>gallery</em><br>of wonders</h1>
+    <p>A curated collection of breathtaking photography and travel films from the world's most remarkable destinations.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
+  <button class="filter-btn" onclick="filterGallery('beaches', this)">Beaches</button>
+  <button class="filter-btn" onclick="filterGallery('cities', this)">Cities</button>
+  <button class="filter-btn" onclick="filterGallery('nature', this)">Nature</button>
+  <button class="filter-btn" onclick="filterGallery('culture', this)">Culture</button>
+</div>
+
+<!-- PHOTO GRID -->
+<section class="gallery-section">
+  <div class="masonry" id="masonry">
+
+    <!-- Each item has data-cat for filtering -->
+    <div class="masonry-item" data-cat="cities" data-name="Paris, France" data-tag="City of Light" onclick="openLightbox(this)">
+      <img src="../image/paris.jpg" alt="Paris"
+           style="aspect-ratio:3/4"
+           onerror="this.style.cssText='width:100%;aspect-ratio:3/4;background:linear-gradient(160deg,#c8623a,#3a1a0d);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Paris</div>
+          <div class="dest-tag">City of Light</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="beaches" data-name="Maldives" data-tag="Crystal Waters" onclick="openLightbox(this)">
+      <img src="../image/download.jpg" alt="Maldives"
+           style="aspect-ratio:4/3"
+           onerror="this.style.cssText='width:100%;aspect-ratio:4/3;background:linear-gradient(160deg,#0099cc,#003344);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Maldives</div>
+          <div class="dest-tag">Crystal Waters</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="nature" data-name="Patagonia, Argentina" data-tag="End of the World" onclick="openLightbox(this)">
+      <img src="../image/paris.jpg" alt="Patagonia"
+           style="aspect-ratio:3/5"
+           onerror="this.style.cssText='width:100%;aspect-ratio:3/5;background:linear-gradient(160deg,#2c5f7a,#0d2030);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Patagonia</div>
+          <div class="dest-tag">End of the World</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="culture" data-name="Kyoto, Japan" data-tag="Ancient Temples" onclick="openLightbox(this)">
+      <img src="../image/paris.jpg" alt="Kyoto"
+           style="aspect-ratio:1/1"
+           onerror="this.style.cssText='width:100%;aspect-ratio:1/1;background:linear-gradient(160deg,#8b2252,#2a0a18);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Kyoto</div>
+          <div class="dest-tag">Ancient Temples</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="beaches" data-name="Santorini, Greece" data-tag="Aegean Dreams" onclick="openLightbox(this)">
+      <img src="../image/download.jpg" alt="Santorini"
+           style="aspect-ratio:4/5"
+           onerror="this.style.cssText='width:100%;aspect-ratio:4/5;background:linear-gradient(160deg,#3a6eaa,#1a2a4a);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Santorini</div>
+          <div class="dest-tag">Aegean Dreams</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="nature" data-name="Sahara Desert" data-tag="Golden Dunes" onclick="openLightbox(this)">
+      <img src="../image/paris.jpg" alt="Sahara"
+           style="aspect-ratio:3/2"
+           onerror="this.style.cssText='width:100%;aspect-ratio:3/2;background:linear-gradient(160deg,#d4a847,#7a3a0d);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Sahara</div>
+          <div class="dest-tag">Golden Dunes</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="cities" data-name="New York, USA" data-tag="The City That Never Sleeps" onclick="openLightbox(this)">
+      <img src="../image/paris.jpg" alt="New York"
+           style="aspect-ratio:2/3"
+           onerror="this.style.cssText='width:100%;aspect-ratio:2/3;background:linear-gradient(160deg,#2a2a4a,#0d0d1a);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">New York</div>
+          <div class="dest-tag">Never Sleeps</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="culture" data-name="Marrakech, Morocco" data-tag="Spice & Color" onclick="openLightbox(this)">
+      <img src="../image/paris.jpg" alt="Marrakech"
+           style="aspect-ratio:4/3"
+           onerror="this.style.cssText='width:100%;aspect-ratio:4/3;background:linear-gradient(160deg,#c8623a,#6a2010);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Marrakech</div>
+          <div class="dest-tag">Spice &amp; Color</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="nature" data-name="Amazon Rainforest" data-tag="Wild &amp; Alive" onclick="openLightbox(this)">
+      <img src="../image/download.jpg" alt="Amazon"
+           style="aspect-ratio:3/4"
+           onerror="this.style.cssText='width:100%;aspect-ratio:3/4;background:linear-gradient(160deg,#2c7744,#0d2b1a);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Amazon</div>
+          <div class="dest-tag">Wild &amp; Alive</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-cat="cities" data-name="Dubai, UAE" data-tag="Future Skyline" onclick="openLightbox(this)">
+      <img src="../image/paris.jpg" alt="Dubai"
+           style="aspect-ratio:16/9"
+           onerror="this.style.cssText='width:100%;aspect-ratio:16/9;background:linear-gradient(160deg,#c8a46a,#2a1a08);display:block'">
+      <div class="item-overlay">
+        <div class="label">
+          <div class="dest-name">Dubai</div>
+          <div class="dest-tag">Future Skyline</div>
+        </div>
+        <div class="expand-icon">⤢</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt=""/>
+    <div class="lightbox-caption">
+      <strong id="lightbox-name"></strong>
+      <span id="lightbox-tag"></span>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO SECTION -->
+<section class="video-section">
+  <p class="eyebrow">✦ In Motion</p>
+  <h2>Travel <em>films</em></h2>
+  <p>Cinematic journeys from corners of the globe</p>
+
+  <div class="video-grid">
+    <!-- Main video -->
+    <div class="video-card">
+      <video controls poster="">
+        <source src="../videos/travel.mp4" type="video/mp4">
+        <!-- Fallback if no video -->
+      </video>
+      <div class="video-meta">
+        <h4>The World in Motion</h4>
+        <p>A cinematic journey across continents · 4 min</p>
+      </div>
+    </div>
+
+    <!-- Side video cards -->
+    <div class="video-side">
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="video-thumb-bg" style="background:linear-gradient(135deg,#0d2a3a,#0099cc44)"></div>
+          <div class="play-btn">▶</div>
+        </div>
+        <div class="video-meta">
+          <h4>Oceans & Islands</h4>
+          <p>Aerial coastal footage · 2 min</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="video-thumb-bg" style="background:linear-gradient(135deg,#1a0d0a,#c8623a44)"></div>
+          <div class="play-btn">▶</div>
+        </div>
+        <div class="video-meta">
+          <h4>Lost in the Desert</h4>
+          <p>Sahara timelapse series · 3 min</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Explore<span>World</span></div>
+  <p>© 2026 ExploreWorld — Travel &amp; Explore</p>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="../place/place.html">Places</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="../contacts/contacts.html">Contact</a>
+  </nav>
+</footer>
+
+<script>
+  // Filter
+  function filterGallery(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.masonry-item').forEach(item => {
+      const show = cat === 'all' || item.dataset.cat === cat;
+      item.style.display = show ? 'block' : 'none';
+    });
+  }
+
+  // Lightbox
+  function openLightbox(el) {
+    const img  = el.querySelector('img');
+    const name = el.dataset.name;
+    const tag  = el.dataset.tag;
+    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox-img').alt = name;
+    document.getElementById('lightbox-name').textContent = name;
+    document.getElementById('lightbox-tag').textContent  = tag;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(e) {
+    if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox({ target: document.getElementById('lightbox') }); });
+</script>
+
+</body>
+</html>
